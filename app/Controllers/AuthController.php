@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Models\Validate;
 
 Class AuthController{
 
@@ -11,15 +12,27 @@ Class AuthController{
         }
     }
 
-    public function register(){  
+    
+    public function register(){
         require_once "resources/views/auth/register.php";
     }
 
     public function registerPost(){
+        $validator = new Validate($_POST['name'], $_POST['email'], $_POST['password']);
+
+            if($validator->validate() != "Input is valid."){
+                
+                $_SESSION["name"] = $validator->validate()['name'];
+                $_SESSION["email"] = $validator->validate()['email'];
+                $_SESSION["password"] = $validator->validate()['password'];
+      
+        }
         $user = new User();
         $user->insert($_POST);
 
         header("Location: register");
+     
+
     }
 
     public function login(){
